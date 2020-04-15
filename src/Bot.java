@@ -4,10 +4,16 @@ import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 
+import java.awt.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Bot extends TelegramLongPollingBot{
 
@@ -46,6 +52,8 @@ public class Bot extends TelegramLongPollingBot{
         SendMessage message = new SendMessage();
         message.setChatId(m.getChatId());
         message.setText(text);
+        message.enableMarkdown(true);
+        setButtons(message);
         try {
             execute(message);
         } catch (TelegramApiException e) {
@@ -62,4 +70,26 @@ public class Bot extends TelegramLongPollingBot{
     public String getBotToken() {
         return "1270371974:AAG3thXALtUx_pzISpRnq1Hz2F8Nn3MkeIA";
     }
+
+    public synchronized void setButtons(SendMessage message){
+        ReplyKeyboardMarkup keyboard = new ReplyKeyboardMarkup();
+        message.setReplyMarkup(keyboard);
+        keyboard.setSelective(true);
+        keyboard.setResizeKeyboard(true);
+        keyboard.setOneTimeKeyboard(false);
+
+        List <KeyboardRow> keyboardRows = new ArrayList<>();
+
+        KeyboardRow row1 = new KeyboardRow();
+        row1.add(new KeyboardButton("Привет"));
+        keyboardRows.add(row1);
+
+        KeyboardRow row2 = new KeyboardRow();
+        row2.add(new KeyboardButton("Первая кнопка"));
+        row2.add(new KeyboardButton("Вторая кнопка"));
+        keyboardRows.add(row2);
+
+        keyboard.setKeyboard(keyboardRows);
+    }
+
 }
