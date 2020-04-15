@@ -7,7 +7,11 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 
-public class Bot extends TelegramLongPollingBot {
+import java.util.HashMap;
+
+public class Bot extends TelegramLongPollingBot{
+
+    public HashMap<Long, String> users = new HashMap<>();
 
     public static void main(String[] args) {
         ApiContextInitializer.init();
@@ -24,10 +28,17 @@ public class Bot extends TelegramLongPollingBot {
         Message message = update.getMessage();
         String text = message.getText();
         System.out.println(text);
-        if (text.equals("ping")){
-            sendMessage(message, "pong");
-        }else{
-            sendMessage(message, "it's not ping");
+        long id = message.getChatId();
+        if (text.equals("/start")) {
+            if (users.containsKey(id)) users.remove(id);
+            sendMessage(message, "Здравствуйте, введите Ваше имя.");
+        } else {
+            if (users.containsKey(id)) {
+                sendMessage(message, users.get(id) + ", Вы сказали: \"" + text + "\"");
+            } else {
+                users.put(id, text);
+                sendMessage(message, "Приятно познакомиться, " + text);
+            }
         }
     }
 
