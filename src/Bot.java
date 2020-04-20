@@ -54,6 +54,11 @@ public class Bot extends TelegramLongPollingBot{
                     user.setCommand("");
                     sendMessage(message, "Приятно познакомиться, " + text);
                     break;
+                case "city1":
+                    user.setCity(text);
+                    user.setCommand("");
+                    sendMessage(message, "город успешно сохранён");
+                    break;
                 default:
                     user.setCommand("");
                     sendMessage(message, "Неизвестная ошибка");
@@ -65,9 +70,15 @@ public class Bot extends TelegramLongPollingBot{
 
         if (text.equals("/set_city")){
             sendMessage(message, "Введите название города.");
-
+            user.setCommand("city1");
             return;
         }
+
+        if (text.equals("/city")){
+            sendMessage(message, "Ваш город: " + user.getCity());
+            return;
+        }
+
 
 
         sendMessage(message, user.getName() + ", Вы сказали: \"" + text + "\"");
@@ -112,8 +123,8 @@ public class Bot extends TelegramLongPollingBot{
         keyboardRows.add(row1);
 
         KeyboardRow row2 = new KeyboardRow();
-        row2.add(new KeyboardButton("Первая кнопка"));
-        row2.add(new KeyboardButton("Вторая кнопка"));
+        row2.add(new KeyboardButton("/set_city"));
+        row2.add(new KeyboardButton("/city"));
         keyboardRows.add(row2);
 
         keyboard.setKeyboard(keyboardRows);
