@@ -17,7 +17,7 @@ import java.util.List;
 
 public class Bot extends TelegramLongPollingBot{
 
-    public HashMap<Long, String> users = new HashMap<>();
+    public HashMap<Long, User> users = new HashMap<>();
 
     public static void main(String[] args) {
         ApiContextInitializer.init();
@@ -35,18 +35,32 @@ public class Bot extends TelegramLongPollingBot{
         String text = message.getText();
         System.out.println(text);
         long id = message.getChatId();
-        if (text.equals("/start")) {
-            if (users.containsKey(id)) users.remove(id);
-            sendMessage(message, "Здравствуйте, введите Ваше имя.");
-        } else {
-            if (users.containsKey(id)) {
-                sendMessage(message, users.get(id) + ", Вы сказали: \"" + text + "\"");
-            } else {
-                users.put(id, text);
-                sendMessage(message, "Приятно познакомиться, " + text);
-            }
+
+        if (!users.containsKey(id)){
+            sendMessage(message, "Пользователь не найден, введите /start.");
+            return;
         }
+
+        //состояния
+
+        users.put(id, new User(text));
+        sendMessage(message, "Приятно познакомиться, " + text);
+
+        if (text.equals("/set_city")){
+            sendMessage(message, "Введите название города.");
+            //
+            return;
+        }
+        if (text.equals("/start")) {
+            sendMessage(message, "Здравствуйте, введите Ваше имя.");
+            //
+            return;
+        }
+
+        sendMessage(message, users.get(id).getName() + ", Вы сказали: \"" + text + "\"");
     }
+
+
 
     private void sendMessage(Message m, String text){
         SendMessage message = new SendMessage();
@@ -81,7 +95,7 @@ public class Bot extends TelegramLongPollingBot{
         List <KeyboardRow> keyboardRows = new ArrayList<>();
 
         KeyboardRow row1 = new KeyboardRow();
-        row1.add(new KeyboardButton("Привет"));
+        row1.add(new KeyboardButton("/start"));
         keyboardRows.add(row1);
 
         KeyboardRow row2 = new KeyboardRow();
