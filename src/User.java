@@ -11,6 +11,11 @@ public class User {
 
     public User(){}
 
+    public String getInfo(){
+        return  "Имя: "   + getName() + "\n"+
+                "Город: " + getCity();
+    }
+
     public String getName() {
         return name;
     }

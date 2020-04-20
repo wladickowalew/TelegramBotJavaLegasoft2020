@@ -79,6 +79,17 @@ public class Bot extends TelegramLongPollingBot{
             return;
         }
 
+        if (text.equals("/rename")){
+            sendMessage(message, "Введите ваше новое имя: " + user.getCity());
+            user.setCommand("name1");
+            return;
+        }
+
+        if (text.equals("/info")){
+            sendMessage(message, user.getInfo());
+            return;
+        }
+
 
 
         sendMessage(message, user.getName() + ", Вы сказали: \"" + text + "\"");
@@ -120,6 +131,7 @@ public class Bot extends TelegramLongPollingBot{
 
         KeyboardRow row1 = new KeyboardRow();
         row1.add(new KeyboardButton("/start"));
+        row1.add(new KeyboardButton("/rename"));
         keyboardRows.add(row1);
 
         KeyboardRow row2 = new KeyboardRow();
