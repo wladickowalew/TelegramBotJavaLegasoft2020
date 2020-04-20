@@ -2,6 +2,7 @@ public class User {
     private String name;
     private String city;
     private String command;
+    private int age;
 
     {
         this.name = "";
@@ -12,8 +13,9 @@ public class User {
     public User(){}
 
     public String getInfo(){
-        return  "Имя: "   + getName() + "\n"+
-                "Город: " + getCity();
+        return  "Имя: "    + getName() + "\n" +
+                "Город: "  + getCity() + "\n" +
+                "Возраст: "+ getAge();
     }
 
     public String getName() {
@@ -38,5 +40,13 @@ public class User {
 
     public void setCommand(String command) {
         this.command = command;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
     }
 }

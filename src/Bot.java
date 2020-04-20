@@ -11,6 +11,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 
 import java.awt.*;
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,56 +47,80 @@ public class Bot extends TelegramLongPollingBot{
             sendMessage(message, "Пользователь не найден, введите /start.");
             return;
         }
+
         User user = users.get(id);
-        if (!user.getCommand().equals("")){
-            switch (user.getCommand()){
-                case "name1":
-                    user.setName(text);
+        if (condition_dispatcher(message, user)) return;
+        if (command_dispatcher(message, user))   return;
+        sendMessage(message, user.getName() + ", Вы сказали: \"" + text + "\"");
+    }
+
+    public boolean condition_dispatcher(Message message, User user){
+        if (user.getCommand().equals("")) return false;
+        String text = message.getText();
+        switch (user.getCommand()){
+            case "name1":
+                user.setName(text);
+                user.setCommand("");
+                sendMessage(message, "Приятно познакомиться, " + text);
+                break;
+            case "city1":
+                user.setCity(text);
+                user.setCommand("");
+                sendMessage(message, "город успешно сохранён");
+                break;
+            case "age1":
+                try {
+                    user.setAge(Integer.parseInt(text));
                     user.setCommand("");
-                    sendMessage(message, "Приятно познакомиться, " + text);
-                    break;
-                case "city1":
-                    user.setCity(text);
-                    user.setCommand("");
-                    sendMessage(message, "город успешно сохранён");
-                    break;
-                default:
-                    user.setCommand("");
-                    sendMessage(message, "Неизвестная ошибка");
-                    break;
-            }
-            return;
+                    sendMessage(message, "Возраст успешно сохранён");
+                }catch (Exception e){
+                    sendMessage(message, "Вы ввели не целое число. Введите только целое число");
+                }
+                break;
+            default:
+                user.setCommand("");
+                sendMessage(message, "Неизвестная ошибка");
+                break;
         }
+        return true;
+    }
 
-
+    public boolean command_dispatcher(Message message, User user){
+        String text = message.getText();
         if (text.equals("/set_city")){
             sendMessage(message, "Введите название города.");
             user.setCommand("city1");
-            return;
+            return true;
         }
 
         if (text.equals("/city")){
             sendMessage(message, "Ваш город: " + user.getCity());
-            return;
+            return true;
+        }
+
+        if (text.equals("/set_age")){
+            sendMessage(message, "Введите, сколько вам лет.");
+            user.setCommand("age1");
+            return true;
+        }
+
+        if (text.equals("/age")){
+            sendMessage(message, "Ваш возраст: " + user.getAge());
+            return true;
         }
 
         if (text.equals("/rename")){
-            sendMessage(message, "Введите ваше новое имя: " + user.getCity());
+            sendMessage(message, "Введите ваше новое имя: ");
             user.setCommand("name1");
-            return;
+            return true;
         }
 
         if (text.equals("/info")){
             sendMessage(message, user.getInfo());
-            return;
+            return true;
         }
-
-
-
-        sendMessage(message, user.getName() + ", Вы сказали: \"" + text + "\"");
+        return false;
     }
-
-
 
     private void sendMessage(Message m, String text){
         SendMessage message = new SendMessage();
@@ -132,12 +157,18 @@ public class Bot extends TelegramLongPollingBot{
         KeyboardRow row1 = new KeyboardRow();
         row1.add(new KeyboardButton("/start"));
         row1.add(new KeyboardButton("/rename"));
+        row1.add(new KeyboardButton("/info"));
         keyboardRows.add(row1);
 
         KeyboardRow row2 = new KeyboardRow();
         row2.add(new KeyboardButton("/set_city"));
         row2.add(new KeyboardButton("/city"));
         keyboardRows.add(row2);
+
+        KeyboardRow row3 = new KeyboardRow();
+        row3.add(new KeyboardButton("/set_age"));
+        row3.add(new KeyboardButton("/age"));
+        keyboardRows.add(row3);
 
         keyboard.setKeyboard(keyboardRows);
     }
