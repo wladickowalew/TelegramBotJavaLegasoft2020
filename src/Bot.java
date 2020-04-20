@@ -36,28 +36,41 @@ public class Bot extends TelegramLongPollingBot{
         System.out.println(text);
         long id = message.getChatId();
 
+        if (text.equals("/start")) {
+            sendMessage(message, "Здравствуйте, введите Ваше имя.");
+            users.put(id, new User());
+            return;
+        }
+
         if (!users.containsKey(id)){
             sendMessage(message, "Пользователь не найден, введите /start.");
             return;
         }
+        User user = users.get(id);
+        if (!user.getCommand().equals("")){
+            switch (user.getCommand()){
+                case "name1":
+                    user.setName(text);
+                    user.setCommand("");
+                    sendMessage(message, "Приятно познакомиться, " + text);
+                    break;
+                default:
+                    user.setCommand("");
+                    sendMessage(message, "Неизвестная ошибка");
+                    break;
+            }
+            return;
+        }
 
-        //состояния
-
-        users.put(id, new User(text));
-        sendMessage(message, "Приятно познакомиться, " + text);
 
         if (text.equals("/set_city")){
             sendMessage(message, "Введите название города.");
-            //
-            return;
-        }
-        if (text.equals("/start")) {
-            sendMessage(message, "Здравствуйте, введите Ваше имя.");
-            //
+
             return;
         }
 
-        sendMessage(message, users.get(id).getName() + ", Вы сказали: \"" + text + "\"");
+
+        sendMessage(message, user.getName() + ", Вы сказали: \"" + text + "\"");
     }
 
 

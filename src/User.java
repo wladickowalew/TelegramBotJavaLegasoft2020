@@ -1,15 +1,15 @@
 public class User {
     private String name;
     private String city;
+    private String command;
 
     {
         this.name = "";
         this.city = "";
+        this.command = "name1";
     }
 
-    public User(String name){
-        this.name = name;
-    }
+    public User(){}
 
     public String getName() {
         return name;
@@ -25,5 +25,13 @@ public class User {
 
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public String getCommand() {
+        return command;
+    }
+
+    public void setCommand(String command) {
+        this.command = command;
     }
 }
